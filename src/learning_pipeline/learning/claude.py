@@ -1,5 +1,6 @@
 from anthropic import Anthropic
 
+from learning_pipeline.config import get_anthropic_api_key
 from learning_pipeline.models import LearningPackage, SourceDocument
 
 
@@ -33,11 +34,12 @@ learner enough pause time to answer aloud before hearing the answer.
 def create_learning_package(
     source: SourceDocument,
 ) -> LearningPackage:
-    client = Anthropic()
+    client = Anthropic(api_key=get_anthropic_api_key())
+
 
     response = client.messages.parse(
         model="claude-sonnet-4-5",
-        max_tokens=10000,
+        max_tokens=12000,
         system=SYSTEM_PROMPT,
         messages=[
             {

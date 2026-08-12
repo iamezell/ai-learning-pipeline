@@ -4,6 +4,8 @@ import httpx
 import typer
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
+from learning_pipeline.learning.claude import create_learning_package
+from learning_pipeline.models import SourceDocument
 
 app = typer.Typer()
 
@@ -37,6 +39,20 @@ def learn(url: str) -> None:
 
     typer.echo(f"Saved to {output_file}")
 
+    source = SourceDocument(
+        title=soup.title.string.strip() if soup.title.string else "Untitled",
+        content=markdown,
+        source_url=url,
+    )
+
+    learning_package = create_learning_package(source)
+
+    typer.echo(f"Created learning package: {learning_package}")
+
+    learning_file = output_dir / f"{slug}-learning.json"
+    learning_file.write_text(learning_package.model_dump_json(indent=2), encoding="utf-8")
+
+    typer.echo(f"Saved to {learning_file}")
 
 
 if __name__ == "__main__":
