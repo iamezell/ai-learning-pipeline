@@ -7,6 +7,8 @@ from markdownify import markdownify as md
 from learning_pipeline.learning.claude import create_learning_package
 from learning_pipeline.models import SourceDocument
 from learning_pipeline.audio.elevenlabs import create_audio_lesson
+from learning_pipeline.audio.quiz import create_audio_quiz
+from learning_pipeline.exporters.remnote import export_remnote
 
 
 app = typer.Typer()
@@ -64,6 +66,31 @@ def learn(url: str) -> None:
         voice_id="21m00Tcm4TlvDq8ikWAM",
         )
     typer.echo(f"Saved to {audio_file}")
+
+
+    quiz_file = output_dir / f"{slug}-quiz.mp3"
+
+    typer.echo(f"Creating audio quiz from {learning_file} to {quiz_file}")
+
+    create_audio_quiz(
+        items=learning_package.audio_quizzes or [],
+        output_path=quiz_file,
+        voice_id="21m00Tcm4TlvDq8ikWAM",
+    )
+
+
+    typer.echo(f"Saved to {quiz_file}")
+
+    remnote_file = output_dir / f"{slug}-remnote.md"
+
+    typer.echo(f"Exporting to {remnote_file}")
+
+    export_remnote(
+        learning_package=learning_package,
+        output_path=remnote_file,
+    )
+    
+    typer.echo(f"Saved to {remnote_file}")
 
 if __name__ == "__main__":
     app()
