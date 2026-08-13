@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 from markdownify import markdownify as md
 from learning_pipeline.learning.claude import create_learning_package
 from learning_pipeline.models import SourceDocument
+from learning_pipeline.audio.elevenlabs import create_audio_lesson
+
 
 app = typer.Typer()
 
@@ -54,6 +56,14 @@ def learn(url: str) -> None:
 
     typer.echo(f"Saved to {learning_file}")
 
+    audio_file = output_dir / f"{slug}-lesson.mp3"
+    typer.echo(f"Creating audio lesson from {learning_file} to {audio_file}")
+    create_audio_lesson(
+        text=learning_package.audio_lessons,
+        output_path=audio_file,
+        voice_id="21m00Tcm4TlvDq8ikWAM",
+        )
+    typer.echo(f"Saved to {audio_file}")
 
 if __name__ == "__main__":
     app()
