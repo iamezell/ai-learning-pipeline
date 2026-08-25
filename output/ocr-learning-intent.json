@@ -1,0 +1,247 @@
+{
+  "title": "OCR Confidence Calibration and Human Review Headcount",
+  "learning_objectives": [
+    "This source does NOT address confidence calibration or how OCR accuracy drives human-review staffing decisions. The learner needs material on false positive rates, confidence thresholds, precision-recall trade-offs, and cost modeling for review workflows — none of which appear here. What IS here: OCR definition, industry uses, AWS services, and a brief technology overview. Use this only to establish shared vocabulary (OCR vs ICR) before seeking sources on calibration and QA pipeline design."
+  ],
+  "concepts": [
+    {
+      "term": "OCR (Optical Character Recognition)",
+      "explanation": "Converts an image of text (scanned form, photo of a receipt) into machine-readable text data that other software can process. Without OCR, a scanned document is just a picture — you cannot search it, count words, or feed it into analytics."
+    },
+    {
+      "term": "ICR (Intelligent Character Recognition)",
+      "explanation": "Modern OCR that uses neural networks to recognize text the way humans do, analyzing curves, lines, intersections across multiple passes. Unlike simple pattern-matching OCR (which needs exact font matches), ICR handles varied fonts, handwriting, and poor-quality scans."
+    },
+    {
+      "term": "Amazon Textract",
+      "explanation": "AWS managed service that extracts text, handwriting, tables, and forms from documents at scale. Returns a confidence score for every extraction, which is the hook for determining what needs human review."
+    },
+    {
+      "term": "Confidence score",
+      "explanation": "A probability estimate (0–100%) that Textract assigns to each extracted piece of text. High confidence (e.g., 98%) suggests the extraction is likely correct; low confidence (e.g., 65%) flags items that may need human verification."
+    },
+    {
+      "term": "Preprocessing",
+      "explanation": "Steps OCR software takes to clean scanned images before reading: deskewing (fixing tilt), despeckling (removing noise), removing boxes/lines. Better preprocessing reduces extraction errors and can shift confidence distributions upward."
+    }
+  ],
+  "pre_questions": [
+    "If your OCR returns a confidence score of 72% on a extracted invoice total, what information do you need to decide whether that invoice goes to a human reviewer or straight into your accounting system?",
+    "At 200 million pages per year, if lowering your confidence threshold from 95% to 90% cuts human review by 30%, what question must you ask before making that change?",
+    "Why would two documents with identical OCR accuracy (e.g., 95% correct extractions) require different human-review headcounts?"
+  ],
+  "recall_cards": [
+    {
+      "question": "What does ICR stand for and how does it differ from simple OCR?",
+      "answer": "Intelligent Character Recognition. ICR uses neural networks to recognize text like humans do (analyzing curves, lines, intersections), while simple OCR relies on pattern-matching against stored font templates.",
+      "importance": 4
+    }
+  ],
+  "concept_cards": [
+    {
+      "question": "You scan 1,000 invoices. What property of the resulting image files prevents your accounting software from totaling the amounts automatically?",
+      "answer": "The text is embedded in image pixels, not stored as text data. Software cannot read, search, or process text that exists only as visual patterns in an image file.",
+      "importance": 5
+    },
+    {
+      "question": "Amazon Textract returns a confidence score with every extraction. What does a confidence score of 68% tell you?",
+      "answer": "Textract estimates a 68% probability that the extraction is correct. It is flagging uncertainty — this item is a candidate for human review depending on your accuracy requirements and error tolerance.",
+      "importance": 5
+    },
+    {
+      "question": "Your preprocessing step deskews a tilted scan and despeckles noise. Why does this matter for downstream costs?",
+      "answer": "Cleaner images yield higher OCR confidence scores and fewer extraction errors, which reduces the volume of low-confidence items routed to human reviewers — directly cutting headcount.",
+      "importance": 5
+    },
+    {
+      "question": "A scanned form has handwritten amounts in one field and printed text elsewhere. Why might you get different confidence scores across fields?",
+      "answer": "ICR handles handwriting but with more uncertainty than printed text. Handwritten fields typically return lower confidence scores, even when correctly extracted, because variability in script is inherent.",
+      "importance": 4
+    }
+  ],
+  "discrimination_cards": [
+    {
+      "question": "You need to pull handwritten dollar amounts off scanned expense forms and route uncertain extractions to a reviewer. Why is simple pattern-matching OCR insufficient and what does ICR add?",
+      "answer": "Pattern-matching OCR requires exact font matches stored in a database — it cannot handle the unlimited variation in handwriting styles. ICR uses neural networks to learn features (curves, line direction, loops) and generalize across handwriting, producing usable extractions with associated confidence scores.",
+      "concept_a": "Simple pattern-matching OCR",
+      "concept_b": "Intelligent Character Recognition (ICR)",
+      "discriminating_feature": "Ability to generalize beyond stored font templates to handle varied handwriting and layouts.",
+      "importance": 5
+    },
+    {
+      "question": "You have 50,000 invoices to process. One vendor always uses the same template and prints clearly; another submits photos of handwritten receipts. Both go through the same OCR engine. Why would the second vendor drive most of your review queue even if page counts are equal?",
+      "answer": "Handwritten receipts and inconsistent layouts produce lower confidence scores than clean, templated invoices. Lower confidence triggers human review. Equal page counts do not mean equal review workload — document quality and structure determine confidence distributions and thus review volume.",
+      "concept_a": "High-confidence extraction (clean templates, printed text)",
+      "concept_b": "Low-confidence extraction (handwriting, variable layouts)",
+      "discriminating_feature": "Confidence score distribution, which determines what proportion of documents require human verification.",
+      "importance": 5
+    },
+    {
+      "question": "Amazon Textract can extract text from a scanned contract OR identify tables and key-value pairs in a structured form. If you are deciding review headcount for 200M pages, why does document type matter more than total page count?",
+      "answer": "Structured forms with tables and key-value pairs have predictable layouts, yielding higher confidence and less review. Contracts with dense paragraphs, footnotes, and varied formatting produce more low-confidence extractions. Headcount is driven by the volume of uncertain extractions, not raw pages.",
+      "concept_a": "Unstructured documents (contracts, clinical notes)",
+      "concept_b": "Structured forms (invoices, applications with fixed fields)",
+      "discriminating_feature": "Layout predictability, which affects OCR confidence and the proportion of pages needing human review.",
+      "importance": 5
+    }
+  ],
+  "cloze_cards": [
+    {
+      "text": "Amazon Textract returns a confidence score for everything it identifies so that you can make informed decisions about how you want to use the results.",
+      "hidden": "confidence score",
+      "importance": 5
+    },
+    {
+      "text": "At 200 million pages per year, even small shifts in confidence thresholds or document quality can change human-review headcount by thousands of hours.",
+      "hidden": "confidence thresholds",
+      "importance": 5
+    },
+    {
+      "text": "OCR converts an image of text into machine-readable text data, but text embedded in image files cannot be processed by word processing software in the same way as text documents.",
+      "hidden": "machine-readable text data",
+      "importance": 4
+    },
+    {
+      "text": "ICR uses neural networks to analyze text over many levels, processing the image repeatedly and looking for curves, lines, intersections, and loops to get the final result.",
+      "hidden": "neural networks",
+      "importance": 4
+    }
+  ],
+  "scenario_cards": [
+    {
+      "question": "Your finance team scans 200M pages of invoices yearly. Textract flags 18% as low-confidence (below 85%). A Director asks why you cannot just accept all extractions and skip review. What do you tell them?",
+      "answer": "Low-confidence extractions have a higher error rate. Accepting them without review means incorrect amounts flow into accounting, causing payment errors, reconciliation failures, and compliance risk. The 18% review rate exists because those extractions are uncertain — skipping review trades headcount savings for financial accuracy and auditability.",
+      "importance": 5
+    },
+    {
+      "question": "You are piloting two OCR vendors. Vendor A averages 92% confidence; Vendor B averages 88%. Your review threshold is 90%. A Director asks why the 4-point difference matters. What is your answer?",
+      "answer": "Vendor B puts far more pages below the 90% threshold, dramatically increasing review volume. If 200M pages × 4% extra low-confidence items = 8M additional pages for human review. At realistic review rates, that is hundreds of FTEs. The confidence distribution, not the average, determines headcount.",
+      "importance": 5
+    },
+    {
+      "question": "Your team reviews 30M pages annually (15% of 200M total). Leadership wants to cut review headcount by 30%. You can lower the confidence threshold from 92% to 87%, but error rates will rise. What trade-off do you surface?",
+      "answer": "Lowering the threshold reduces pages sent to review, cutting headcount. But more errors pass through: incorrect invoice amounts, misread account numbers, wrong vendor names. You need to quantify the cost of those errors (rework, payment disputes, compliance issues) versus salary savings, then let leadership choose the acceptable error rate.",
+      "importance": 5
+    },
+    {
+      "question": "A new regulation requires 98% accuracy on medical claim forms. Your current OCR + review pipeline delivers 96%. How does this change your review headcount and what is the mechanism?",
+      "answer": "You must tighten the confidence threshold to catch more uncertain extractions before they become errors. This increases the percentage of claims routed to human review, directly increasing headcount. The mechanism: higher accuracy requirements mean lower tolerance for OCR uncertainty, so more items cross the review threshold.",
+      "importance": 5
+    }
+  ],
+  "multiple_choice": [
+    {
+      "question": "Your OCR system processes 200M pages yearly with a 90% confidence threshold for review. Improving preprocessing (better deskewing, despeckling) shifts the average confidence from 89% to 91%. What is the primary impact?",
+      "choices": [
+        "Processing speed doubles because cleaner images are faster to read",
+        "Fewer pages fall below the 90% threshold, reducing human-review volume",
+        "Accuracy improves but review headcount stays the same because the threshold is unchanged",
+        "The system can now handle handwritten forms that were previously rejected"
+      ],
+      "correct_answer": "Fewer pages fall below the 90% threshold, reducing human-review volume",
+      "explanation": "Shifting average confidence from 89% to 91% moves a significant portion of the distribution above the 90% review threshold. Fewer low-confidence extractions mean fewer pages sent to reviewers, directly cutting headcount. The threshold itself has not changed, but the proportion of pages below it has dropped.",
+      "importance": 5
+    },
+    {
+      "question": "Amazon Textract extracts text from a scanned invoice and returns a confidence score of 74% on the total amount. What does this score represent?",
+      "choices": [
+        "74% of the characters in that field were recognized correctly",
+        "Textract processed the image in 74% of the expected time",
+        "There is a 74% probability that the extraction matches the actual text in the image",
+        "The image quality was rated 74 out of 100"
+      ],
+      "correct_answer": "There is a 74% probability that the extraction matches the actual text in the image",
+      "explanation": "A confidence score is a probability estimate. 74% means Textract is moderately uncertain — it is flagging this extraction as a candidate for human review. It does NOT mean 74% of characters are correct (you could have 100% wrong at 74% confidence if the model is miscalibrated).",
+      "importance": 5
+    },
+    {
+      "question": "You are explaining to a Director why 200M pages require different review headcounts depending on document type. Two datasets have identical OCR accuracy (94% correct extractions). Why might one require 3× the review hours?",
+      "choices": [
+        "One dataset uses an older OCR engine with slower processing",
+        "One dataset has a narrower confidence distribution, putting more pages near the review threshold",
+        "One dataset comes from international sources requiring translation",
+        "One dataset includes more pages, so even at the same percentage, absolute volume is higher"
+      ],
+      "correct_answer": "One dataset has a narrower confidence distribution, putting more pages near the review threshold",
+      "explanation": "Review headcount is driven by how many extractions fall below the confidence threshold, not by overall accuracy. A dataset with 94% accuracy but many scores clustered near the threshold (e.g., 85–92%) will send more items to review than one with 94% accuracy and scores concentrated at 98%. The shape of the confidence distribution, not the mean, determines review volume.",
+      "importance": 5
+    },
+    {
+      "question": "Which OCR improvement would most directly reduce human-review headcount in a 200M-page-per-year workflow?",
+      "choices": [
+        "Faster processing speed (10 pages/sec to 50 pages/sec)",
+        "Higher confidence scores on the same extractions (shifting the distribution upward)",
+        "Support for 30 additional languages",
+        "Ability to extract tables as well as plain text"
+      ],
+      "correct_answer": "Higher confidence scores on the same extractions (shifting the distribution upward)",
+      "explanation": "Higher confidence scores move more pages above the review threshold, directly reducing the volume sent to human reviewers. Speed, language support, and table extraction are valuable features but do not change what proportion of pages require manual verification.",
+      "importance": 5
+    }
+  ],
+  "teach_back": [
+    {
+      "prompt": "Explain to a non-technical Director how confidence scores from an OCR system determine how many people you need to review 200 million pages a year. Walk through the mechanism step-by-step.",
+      "keypoints": [
+        "OCR extracts text from scanned images and assigns each extraction a confidence score (a probability it is correct)",
+        "You set a threshold — e.g., anything below 90% confidence goes to a human reviewer",
+        "The percentage of pages below that threshold × 200M pages = total pages needing review",
+        "Review capacity (pages per hour per person) converts that volume into headcount",
+        "Improving OCR quality (better preprocessing, better models) shifts confidence scores upward, fewer pages cross the threshold, headcount drops",
+        "Tightening accuracy requirements (regulatory compliance) forces a higher threshold, more pages need review, headcount rises"
+      ]
+    }
+  ],
+  "apply_tasks": [
+    "Pull the last month of OCR confidence scores from your current system (or request sample data from your vendor). Plot the distribution. Pick three candidate review thresholds (e.g., 85%, 90%, 95%) and calculate how many pages per month would go to review at each level. Multiply by your team's average review rate (pages/hour) to estimate FTE impact. Write a one-paragraph summary of the trade-off between headcount and risk for each threshold. Time: 20 minutes.",
+    "Draft a 3-sentence explanation of why 'OCR accuracy' and 'review headcount' are not the same thing, using a concrete example with two datasets at 94% accuracy but different confidence distributions. Test it on a non-technical colleague. Revise based on their confusion points. This is your opening when the Director asks why vendor A costs less but requires more reviewers. Time: 15 minutes."
+  ],
+  "audio_lesson": "You scan two hundred million pages a year. Someone has to review the uncertain ones — the invoices where the OCR is not sure it read the total correctly, the forms where handwriting is messy. Your director wants to know why confidence calibration drives how many people you need on that review team. Let's walk through the mechanism. OCR converts scanned images into text your systems can process. Amazon Textract, for example, looks at a scanned invoice and pulls out the vendor name, the date, the amount. But it does not just give you the text — it also gives you a confidence score. Ninety-two percent confident on this total. Sixty-eight percent confident on that account number. That score is a probability estimate. It is the system saying: I think this is right, but here is how sure I am. Now you have to decide: what do we trust and what do we check? You set a threshold. Let's say ninety percent. Anything below that goes to a human reviewer. Anything above goes straight through. That threshold is where calibration lives. If your OCR confidence scores are well calibrated, a ninety-two percent score really means ninety-two percent chance of being correct. If they are poorly calibrated, that ninety-two might only be seventy percent accurate in practice — and you are letting errors through. Here is where headcount comes in. Suppose fifteen percent of your pages score below ninety. Fifteen percent of two hundred million is thirty million pages. If one reviewer can handle two hundred pages an hour, and they work two thousand hours a year, that is four hundred thousand pages per reviewer per year. Thirty million divided by four hundred thousand is seventy-five full-time people. Now improve your OCR. Better preprocessing — deskew the images, remove noise. Or switch to a model with tighter confidence distributions. Your average score shifts from eighty-nine to ninety-one. Suddenly only ten percent of pages fall below the threshold. Ten percent of two hundred million is twenty million pages. Same math: fifty reviewers instead of seventy-five. You just cut headcount by a third, not by processing fewer pages, but by being more confident in the pages you process. The flip side: tighten your accuracy requirements. A regulation says you need ninety-eight percent accuracy on medical claims. You cannot let anything risky through. So you raise the threshold to ninety-five percent confidence. Now maybe thirty percent of your pages need review. Sixty million pages. That is a hundred and fifty people. Same OCR system, same page volume, but your risk tolerance changed and headcount doubled. This is why confidence calibration is not an abstract ML concern. It is a staffing model input. Every point you shift the confidence distribution changes how many pages cross that threshold. And every million pages that cross the threshold is two or three heads on your team. When you talk to your director, the story is simple: we set a confidence bar, OCR tells us what clears it, and everyone below that bar is a person-hour of work. Better OCR raises the bar. Tighter requirements lower it. Calibration is what makes those confidence scores trustworthy enough to bet headcount on.",
+  "audio_quiz": [
+    {
+      "question": "What does a confidence score of seventy-four percent from an OCR system tell you?",
+      "answer": "It is a probability estimate — the system is seventy-four percent sure the extraction is correct. It is flagging uncertainty, so this item is a candidate for human review.",
+      "pause_seconds": 12
+    },
+    {
+      "question": "You have two hundred million pages. Fifteen percent score below your ninety percent confidence threshold. How many pages go to human review?",
+      "answer": "Thirty million pages. Fifteen percent of two hundred million is thirty million.",
+      "pause_seconds": 8
+    },
+    {
+      "question": "Your OCR confidence distribution shifts upward — average goes from eighty-nine to ninety-one percent. Your review threshold stays at ninety. What happens to review headcount?",
+      "answer": "It drops. More pages now score above ninety, so fewer pages are sent to reviewers. Higher confidence means less review volume.",
+      "pause_seconds": 15
+    },
+    {
+      "question": "Two datasets both have ninety-four percent OCR accuracy. Why might one require three times the review headcount?",
+      "answer": "Because headcount is driven by how many pages fall below the confidence threshold, not overall accuracy. One dataset might have scores clustered near the threshold, sending more to review, while the other has scores concentrated higher up.",
+      "pause_seconds": 20
+    },
+    {
+      "question": "A new regulation requires ninety-eight percent accuracy. You currently deliver ninety-six. How does this affect your review process?",
+      "answer": "You have to tighten the confidence threshold to catch more uncertain extractions before they become errors. This increases the percentage of pages going to review, which directly increases headcount.",
+      "pause_seconds": 18
+    },
+    {
+      "question": "What is the difference between simple pattern-matching OCR and intelligent character recognition when it comes to handling handwritten forms?",
+      "answer": "Pattern-matching needs exact font matches stored in a database, so it fails on handwriting. ICR uses neural networks to learn features like curves and loops, so it can handle varied handwriting — though usually with lower confidence than printed text.",
+      "pause_seconds": 20
+    },
+    {
+      "question": "If one reviewer processes two hundred pages per hour and works two thousand hours a year, how many pages can they handle annually?",
+      "answer": "Four hundred thousand pages per year.",
+      "pause_seconds": 6
+    },
+    {
+      "question": "Why does better image preprocessing — like deskewing and despeckling — reduce review headcount?",
+      "answer": "Cleaner images produce higher OCR confidence scores. Higher scores mean fewer pages fall below your review threshold. Fewer flagged pages means less work for human reviewers.",
+      "pause_seconds": 15
+    },
+    {
+      "question": "You are explaining to a director why lowering the confidence threshold from ninety-two to eighty-seven percent cuts headcount but increases risk. What is the trade-off?",
+      "answer": "Lowering the threshold means fewer pages go to review, so you need fewer people. But you are accepting more uncertain extractions, so error rates rise — incorrect amounts, wrong account numbers. You save on salary but pay in rework and compliance risk.",
+      "pause_seconds": 22
+    }
+  ]
+}

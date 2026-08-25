@@ -18,7 +18,6 @@ dependencies = [
     "mcp>=2.0.0",
     "pydantic>=2.13.4",
     "pydub>=0.25.1",
-    "pytest>=9.1.1",
     "python-dotenv>=1.2.2",
     "typer>=0.27.1",
 ]

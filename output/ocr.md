@@ -1,23 +1,16 @@
-* [What is Cloud Computing?](/what-is-cloud-computing/)
-* [Cloud Computing Concepts Hub](/what-is/)
-* [Artificial Intelligence](/ai/)
-* What is OCR (Optical Character Recognition)?
-
 # What is OCR (Optical Character Recognition)?
 
 [Create an AWS Account](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html?pg=what_is_header)
 
-## Page topics
-
-* [What is OCR (Optical Character Recognition)?](#what-is-ocr-optical-character-recognition--15s0dvp)
-* [Why is OCR important?](#why-is-ocr-important--15s0dvp)
-* [What are the benefits of OCR?](#what-are-the-benefits-of-ocr--15s0dvp)
-* [What is the history and evolution of OCR?](#what-is-the-history-and-evolution-of-ocr--15s0dvp)
-* [What are the different OCR use cases in document processing?](#what-are-the-different-ocr-use-cases-in-document-processing--15s0dvp)
-* [How is OCR used in different industries?](#how-is-ocr-used-in-different-industries--15s0dvp)
-* [How does OCR work?](#how-does-ocr-work--15s0dvp)
-* [What are the types of OCR?](#what-are-the-types-of-ocr--15s0dvp)
-* [How can AWS help with OCR?](#how-can-aws-help-with-ocr--15s0dvp)
+* [What is OCR (Optical Character Recognition)?](#amsc1--15s0dvp)
+* [Why is OCR important?](#amsc2--15s0dvp)
+* [What are the benefits of OCR?](#amsc3--15s0dvp)
+* [What is the history and evolution of OCR?](#amsc4--15s0dvp)
+* [What are the different OCR use cases in document processing?](#amsc5--15s0dvp)
+* [How is OCR used in different industries?](#amsc6--15s0dvp)
+* [How does OCR work?](#amsc7--15s0dvp)
+* [What are the types of OCR?](#amsc8--15s0dvp)
+* [How can AWS help with OCR?](#amsc9--15s0dvp)
 
 ## What is OCR (Optical Character Recognition)?
 
@@ -213,4 +206,4 @@ Let us know so we can improve the quality of the content on our pages
 Yes
 
  
-No
+ No

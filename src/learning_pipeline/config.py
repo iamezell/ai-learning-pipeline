@@ -12,15 +12,8 @@ def get_anthropic_api_key() -> str:
     return api_key
 
 
-def get_openai_api_key() -> str:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY is not set")
-    return api_key
-
 def get_elevenlabs_api_key() -> str:
     api_key = os.getenv("ELEVENLABS_API_KEY")
     if not api_key:
         raise RuntimeError("ELEVENLABS_API_KEY is not set")
     return api_key
-
